@@ -7,10 +7,10 @@ Install notes on WLAN Pi v2.0.1 image
 =====================================
 
 1. Install pre-req Python modules:
-
+```
     pip3 install psutil
     pip3 install netifaces
-
+```
 2. SSH to the WLAN Pi
 
 3. Clone the bot Github repo:
