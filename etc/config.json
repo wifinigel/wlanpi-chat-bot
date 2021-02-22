@@ -2,7 +2,7 @@
     "telegram": {
         "bot_token": "",
         "chat_id": "",
-        "display_node": "full",
+        "display_mode": "full",
         "display_width": "30"
     }
 }
