@@ -30,6 +30,7 @@ from utils.parser import parse_cmd
 from utils.config import Config
 
 logging.basicConfig(level=logging.INFO)
+bot_logger = logging.getLogger('wlanpi-bot')
 
 long_polling_timeout = 100
 
@@ -61,6 +62,13 @@ def main():
         #
         # Pass the ID of last rec'd message to ack message and stop it being sent again
         updates = t.get_updates(last_update_id)
+
+        # something went wrong - maybe out Internet connection is down, sleep
+        # and try again
+        if not updates:
+            bot_logger.info("Looks like possible issue reaching Telegram - sleeping")
+            time.sleep(60)
+            continue
 
         # report on node status if this is a reboot or something changed
         snapshot = DataSnapshot()
@@ -114,7 +122,7 @@ def main():
             else:
                 msg = 'Unknown command (try "help" command)'
 
-            logging.debug("Send status data to Telegram")
+            bot_logger.debug("Send status data to Telegram: {}".format(msg))
             t.send_msg(msg, chat)
 
 
