@@ -15,6 +15,10 @@ class ExecPing(Command):
         target_ip = ''
 
         if len(args_list) > 0:
+
+            if args_list[0] == "?":
+                return self._render(self.help_message())
+            
             target_ip = args_list[0]
         else:
             return self._render("Unable to run test, no IP address passed (syntax : exec ping &lt;ip_address&gt;)")

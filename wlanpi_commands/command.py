@@ -101,8 +101,8 @@ class Command():
         """
         Return the help page for this command
         """
-        short_msg = "Help message short"
-        long_msg = "A long message that could perhaps span a few lines...\n Who knows..?"
+        short_msg = "No help defined"
+        long_msg = "The developer has not yet defined a help page for this command.\nIt was probably Nigel."
 
         if self.display_mode == "compact":
             return short_msg

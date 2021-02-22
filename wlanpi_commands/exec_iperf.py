@@ -17,6 +17,10 @@ class ExecIperf(Command):
 
         # pull off the first arg, which is IP address
         if len(args_list) > 0:
+
+            if args_list[0] == "?":
+                return self._render(self.help_message())
+            
             target_ip = args_list[0]
         
         if len(args_list) > 1:
