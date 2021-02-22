@@ -10,7 +10,7 @@ import urllib
 import json
 
 logging.basicConfig(level=logging.INFO)
-class_logger = logging.getLogger('TelegramAlert')
+class_logger = logging.getLogger('wlanpi-bot-comms')
 
 class TelegramComms(object):
 
@@ -79,17 +79,32 @@ class TelegramComms(object):
         
         return True
     
-    # TODO: add error check
+
     def get_url(self, url):
-        response = requests.get(url)
+        
+        try:
+            response = requests.get(url)
+        except HTTPError as http_err:
+            self.err_msg = f'HTTP error occurred: {http_err}'
+            class_logger.error(self.err_msg)
+            return False
+        except Exception as err:
+            self.err_msg = f'Other error occurred: {err}'
+            class_logger.error(self.err_msg)
+            return False
+        
         content = response.content.decode("utf8")
         return content
 
 
     def get_json_from_url(self, url):
         content = self.get_url(url)
-        js = json.loads(content)
-        return js
+
+        if content:
+            js = json.loads(content)
+            return js
+        else:
+            return False
 
 
     def get_updates(self, offset=None):
@@ -97,7 +112,11 @@ class TelegramComms(object):
         if offset:
             url += "&offset={}".format(offset)
         js = self.get_json_from_url(url)
-        return js
+
+        if js:
+            return js
+        else:
+            return False
 
 
     def get_last_update_id(self, updates):
