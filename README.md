@@ -27,3 +27,4 @@ If you want to start again by removing everything, go to the dir where you clone
 
 `sudo ./install.sh -r`
 
+![Probe Report](docs/images/screenshot.png)
