@@ -126,6 +126,7 @@ from .exec_ping import ExecPing
 from .exec_speedtest import ExecSpeedtest
 from .show_status import ShowStatus
 from .show_version import ShowVersion
+from .show_wlan import ShowWlan
 
 
 def register_commands(telegram_object, conf_obj):
