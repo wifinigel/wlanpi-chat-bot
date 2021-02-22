@@ -8,6 +8,6 @@ class ExecReboot(Command):
 
         self.command_name = "exec_reboot"
     
-    def run(self, args_list):        
+    def run(self, args_list):   
         os.system('shutdown -r')
         return self._render("Attempting reboot in 1 minute...")
