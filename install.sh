@@ -23,8 +23,8 @@ else
     sudo chmod +x $BASEDIR/wlanpi-chat-bot
 
     # prompt user for app key
-    read -p 'Please enter your bot token: ' token
-    sed -i 's/'"bot_token": "",/"bot_token": "${token}",/'' $CONFIG_FILE
+    read -p 'Please enter your bot token: ' TOKEN
+    sed -i "s/\"bot_token\"\: \"\",/\"bot_token\"\: \"$TOKEN\",/" $CONFIG_FILE
 
 
     cd ./scripts
