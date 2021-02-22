@@ -30,6 +30,7 @@ else
     cd ./scripts
     sudo install -p -m 644 wlanpi-chat-bot.service /lib/systemd/system/wlanpi-chat-bot.service
     sudo systemctl enable wlanpi-chat-bot.service
+    sudo systemctl start wlanpi-chat-bot.service
     echo "Bot service status:"
     echo ""
     echo "=============================================================="
