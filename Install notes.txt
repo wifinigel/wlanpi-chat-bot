@@ -1,5 +1,22 @@
+Install notes on WLAN Pi v2.0.1 image
+=====================================
+
+1. Install pre-req Python modules:
+
+    pip3 install psutil
+    pip3 install netifaces
+
+2. SSH to the WLAN Pi
+
+3. Clone the bot Github repo:
+
+    sudo git clone https://github.com/wifinigel/wlanpi-chat-bot.git
+
+4. cd wlanpi-chat-bot
+
+5. sudo chmod 755 ./install.sh 
+
+6. ./install.sh (make sure you have you app token ready to enter when prompted by the script)
 
 
-pip3 install psutil
-pip3 install netifaces
 
