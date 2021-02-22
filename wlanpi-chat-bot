@@ -106,6 +106,8 @@ def main():
             # get list of available commands
             command_list = list(GLOBAL_CMD_DICT.keys())
             command_list.sort()
+            # cmd list with spaces added in
+            fixed_command_list = [e.replace("_", " ") for e in command_list]
 
             # parse command and expand any shortening of verbs (run, show, set, exec)
             [command, args_list] = parse_cmd(text, command_list)
@@ -113,10 +115,12 @@ def main():
             msg = "blank"
             if text == 'help' or text == "?":
                 msg = ['Available commands:\n']
-                fixed_command_list = [e.replace("_", " ") for e in command_list]
                 msg = msg + fixed_command_list
-            elif text == "*":
-                msg = "*" * 100
+            elif text.startswith('help '):
+                msg = ['Filtered commands:\n']
+                cmd = text[5:]
+                match_list = list(filter(lambda x: (x.startswith(cmd)) , fixed_command_list))
+                msg = msg + match_list
             elif command in command_list:
                 msg = GLOBAL_CMD_DICT[command].run(args_list)
             else:
