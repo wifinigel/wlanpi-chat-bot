@@ -1,13 +1,17 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import requests
-from requests.exceptions import HTTPError
+import json
 import logging
 import time
 import requests
+from requests.exceptions import HTTPError
+import subprocess
+import sys
 import urllib
-import json
+
+from utils.constants import TELEGRAM_URL, TELEGRAM_HOST, TELEGRAM_PORT
+from utils.os_cmds import NC_CMD
 
 logging.basicConfig(level=logging.INFO)
 class_logger = logging.getLogger('wlanpi-bot-comms')
@@ -36,7 +40,7 @@ class TelegramComms(object):
         self.chat_id = False
         self.err_msg = ''
         self.long_polling_timeout = 100
-        self.URL = "https://api.telegram.org/bot{}/".format(self.api_key)
+        self.bot_url = "{}/bot{}/".format(TELEGRAM_URL, self.api_key)
 
     def send_msg(self, messages, chat_id):
 
@@ -64,7 +68,7 @@ class TelegramComms(object):
 
         # correctly encode message
         message = urllib.parse.quote_plus(message)
-        url = f"https://api.telegram.org/bot{self.api_key}/sendMessage?chat_id={chat_id}&parse_mode=html&text={message}"
+        url = f"{TELEGRAM_URL}/bot{self.api_key}/sendMessage?chat_id={chat_id}&parse_mode=html&text={message}"
 
         try:
             requests.post(url)
@@ -98,6 +102,7 @@ class TelegramComms(object):
 
 
     def get_json_from_url(self, url):
+
         content = self.get_url(url)
 
         if content:
@@ -108,11 +113,12 @@ class TelegramComms(object):
 
 
     def get_updates(self, offset=None):
-        url = self.URL + "getUpdates?timeout={}".format(self.long_polling_timeout)
+        url =  "{}getUpdates?timeout={}".format(self.bot_url, self.long_polling_timeout)
+        
         if offset:
             url += "&offset={}".format(offset)
         js = self.get_json_from_url(url)
-
+        
         if js:
             return js
         else:
@@ -133,5 +139,13 @@ class TelegramComms(object):
         chat_id = updates["result"][last_update]["message"]["chat"]["id"]
         return (text, chat_id)
 
+    def check_api_access(self):
+        try:
+            subprocess.check_output('{} -zvw10 {} {}'.format(NC_CMD, TELEGRAM_HOST, TELEGRAM_PORT), stderr=subprocess.STDOUT, shell=True).decode()
+            class_logger.debug("  Port connection to {}, port: {} checked OK.".format(TELEGRAM_HOST, TELEGRAM_PORT))
+        except subprocess.CalledProcessError as exc:
+            output = exc.output.decode()
+            class_logger.error("Port check to Telegram failed. Err msg: {}".format(str(output)))
+            return False
 
-
+        return True
