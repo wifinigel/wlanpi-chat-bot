@@ -40,7 +40,9 @@ OS_CORE_CMDS = {
     'REBOOT_CMD': _find_cmd('/sbin/reboot'),
     'ROUTE_CMD': _find_cmd('/sbin/route'),
     'TIMEDATECTL_CMD': _find_cmd('/usr/bin/timedatectl'),
-    'CURL_CMD': _find_cmd('/usr/bin/curl')
+    'CURL_CMD': _find_cmd('/usr/bin/curl'),
+    'IPERF_CMD': _find_cmd('/usr/bin/iperf'),
+    'IPERF3_CMD': _find_cmd('/usr/bin/iperf3'),
 }
 
 # define optional OS commands (attempt to find in path if not in hardcoded path)
@@ -60,6 +62,8 @@ REBOOT_CMD = OS_CORE_CMDS['REBOOT_CMD']
 ROUTE_CMD = OS_CORE_CMDS['ROUTE_CMD']
 TIMEDATECTL_CMD = OS_CORE_CMDS['TIMEDATECTL_CMD']
 CURL_CMD = OS_CORE_CMDS['CURL_CMD']
+IPERF_CMD = OS_CORE_CMDS['IPERF_CMD']
+IPERF3_CMD = OS_CORE_CMDS['IPERF3_CMD']
 
 def check_os_cmds(file_logger):
     """
