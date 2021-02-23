@@ -23,8 +23,13 @@ Install notes on WLAN Pi v2.0.1 image
 
 6. `sudo ./install.sh` (make sure you have you app token ready to enter when prompted by the script)
 
-If you want to start again by removing everything, go to the dir where you cloned the repo and uninstall using:
+## Notes
+1. If you want to start again by removing everything, go to the dir where you cloned the repo and uninstall using:
 
 `sudo ./install.sh -r`
+
+2. To clone the dev branch (if you're feeling brave), use the process above, but use the following clone command:
+
+    `sudo git clone -b dev https://github.com/wifinigel/wlanpi-chat-bot.git`
 
 ![Probe Report](docs/images/screenshot.png)
