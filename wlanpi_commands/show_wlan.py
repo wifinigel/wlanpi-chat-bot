@@ -54,7 +54,7 @@ class ShowWlan(Command):
         # Extract interface info
         interface_re = re.findall(
             r'^(wlan\d)  ', ifconfig_info, re.DOTALL | re.MULTILINE)
-        if interface_re is None:
+        if not interface_re:
             return "Err: command failed: ifconfig match error."
         else:
             for interface_name in interface_re:
