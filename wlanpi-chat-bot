@@ -25,7 +25,7 @@ from transports.telegram_comms import TelegramComms
 from wlanpi_commands.command import Command
 from wlanpi_commands.command import register_commands
 from utils.node_data_snapshot import DataSnapshot
-from utils.parser import parse_cmd
+from utils.parser import parse_cmd, lazy_parser
 
 from utils.config import Config
 
@@ -104,6 +104,7 @@ def main():
             text = ' '.join(text.split())
 
             # get list of available commands
+            # TODO: don't need to do this every loop - move outside of main loop
             command_list = list(GLOBAL_CMD_DICT.keys())
             command_list.sort()
             # cmd list with spaces added in
@@ -111,20 +112,31 @@ def main():
 
             # parse command and expand any shortening of verbs (run, show, set, exec)
             [command, args_list] = parse_cmd(text, command_list)
-            
+
             msg = "blank"
+
+            # parse the message we recevied
             if text == 'help' or text == "?":
+                # process a short help request (return everything)
                 msg = ['Available commands:\n']
                 msg = msg + fixed_command_list
             elif text.startswith('help '):
+                # process a help request with match filter (e.g. 'help sh')
                 msg = ['Filtered commands:\n']
                 cmd = text[5:]
                 match_list = list(filter(lambda x: (x.startswith(cmd)) , fixed_command_list))
                 msg = msg + match_list
             elif command in command_list:
+                # check for an exact command match & execute it
                 msg = GLOBAL_CMD_DICT[command].run(args_list)
             else:
-                msg = 'Unknown command (try "help" command)'
+                # TODO: Add in smart match to see if can get unique partial match
+                [command, args_list] = lazy_parser(text, fixed_command_list)
+
+                if command:
+                    msg = GLOBAL_CMD_DICT[command].run(args_list)
+                else:
+                    msg = 'Unknown command (try "help" command)'
 
             bot_logger.debug("Send status data to Telegram: {}".format(msg))
             t.send_msg(msg, chat)
