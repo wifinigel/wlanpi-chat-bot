@@ -134,7 +134,7 @@ def register_commands(telegram_object, conf_obj):
     command_objects = []
     global_objs = list(globals().items())
 
-    for name, obj in global_objs:
+    for _, obj in global_objs:
         if obj is not Command and isinstance(obj, type) and issubclass(obj, Command):
             command_objects.append(obj(telegram_object, conf_obj))
 
