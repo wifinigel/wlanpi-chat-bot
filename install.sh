@@ -5,6 +5,7 @@ CONFIG_FILE=/opt/wlanpi-chat-bot/etc/config.json
 
 if [ "$1" == '-r' ]; then
     echo "Removing WLAN Pi Chat bot..."
+    sudo systemctl stop wlanpi-chat-bot.service
     sudo systemctl disable wlanpi-chat-bot.service
     sudo rm /lib/systemd/system/wlanpi-chat-bot.service
     sudo systemctl reset-failed
