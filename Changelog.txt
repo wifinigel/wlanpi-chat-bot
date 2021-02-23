@@ -6,3 +6,7 @@ v0.02
 3. Added "show wlan" command
 4. Added smarter partial matching. "sh wl" (show wlan), "e pi 192.168.0.1" (exec ping 192.168.0.1)
 
+v0.03
+
+1. Added connection check to Telegram API
+2. Centralised constants & os commands

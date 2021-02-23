@@ -2,6 +2,8 @@ from .command import Command
 import os
 import subprocess
 
+from utils.os_cmds import IPERF_CMD
+
 class ExecIperf(Command):
     
     def __init__(self, telegram_object, conf_obj):
@@ -11,7 +13,6 @@ class ExecIperf(Command):
     
     def run(self, args_list):      
 
-        IPERF = '/usr/bin/iperf'
         target_ip = ''
         proto = "tcp"
 
@@ -31,7 +32,7 @@ class ExecIperf(Command):
 
         if target_ip:
             progress_msg = "Runing iperf test ({})...".format(proto)
-            cmd_string = "{} -i 1 {} -c {} 2>&1".format(IPERF, proto_switch, target_ip)
+            cmd_string = "{} -i 1 {} -c {} 2>&1".format(IPERF_CMD, proto_switch, target_ip)
             return self._render(self.run_ext_cmd(progress_msg,cmd_string))
         else:
             return self._render("Unable to run test, no IP address passed (syntax : exec iperf &lt;ip_address&gt; [ udp | tcp ])")

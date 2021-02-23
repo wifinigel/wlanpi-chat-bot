@@ -2,6 +2,8 @@ from .command import Command
 import os
 import subprocess
 
+from utils.os_cmds import PING_CMD
+
 class ExecPing(Command):
     
     def __init__(self, telegram_object, conf_obj):
@@ -11,7 +13,6 @@ class ExecPing(Command):
     
     def run(self, args_list):
 
-        PING = '/usr/bin/ping'
         target_ip = ''
 
         if len(args_list) > 0:
@@ -24,5 +25,5 @@ class ExecPing(Command):
             return self._render("Unable to run test, no IP address passed (syntax : exec ping &lt;ip_address&gt;)")
 
         progress_msg = "Runing ping test..."
-        cmd_string = "{} -c 10 -W 1 -i 0.2 {} 2>&1".format(PING, target_ip) 
+        cmd_string = "{} -c 10 -W 1 -i 0.2 {} 2>&1".format(PING_CMD, target_ip) 
         return self._render(self.run_ext_cmd(progress_msg,cmd_string))
