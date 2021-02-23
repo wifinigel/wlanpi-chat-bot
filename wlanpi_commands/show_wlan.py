@@ -2,6 +2,7 @@ from .command import Command
 import subprocess
 import re
 
+from utils.os_cmds import IFCONFIG_CMD, IWCONFIG_CMD
 class ShowWlan(Command):
     
     def __init__(self, telegram_object, conf_obj):
@@ -43,8 +44,8 @@ class ShowWlan(Command):
         Create page to summarise WLAN interface info
         '''
 
-        ifconfig_file = '/usr/sbin/ifconfig'
-        iwconfig_file = '/usr/sbin/iwconfig'
+        ifconfig_file = IFCONFIG_CMD
+        iwconfig_file = IWCONFIG_CMD
 
         try:
             ifconfig_info = subprocess.check_output('{} -s'.format(ifconfig_file), shell=True).decode()
