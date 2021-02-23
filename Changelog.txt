@@ -4,3 +4,5 @@ v0.02
 2. Added check for bad comms to Telegram with sleep if issue detected. Prevents
    service crash if Internet not available on boot up
 3. Added "show wlan" command
+4. Added smarter partial matching. "sh wl" (show wlan), "e pi 192.168.0.1" (exec ping 192.168.0.1)
+
