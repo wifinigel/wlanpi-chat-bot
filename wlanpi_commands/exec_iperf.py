@@ -34,4 +34,4 @@ class ExecIperf(Command):
             cmd_string = "{} -i 1 {} -c {} 2>&1".format(IPERF, proto_switch, target_ip)
             return self._render(self.run_ext_cmd(progress_msg,cmd_string))
         else:
-            return self._render("Unable to run test, no IP address passed (syntax : exec iperf &lt;ip_address&gt;)")
+            return self._render("Unable to run test, no IP address passed (syntax : exec iperf &lt;ip_address&gt; [ udp | tcp ])")
