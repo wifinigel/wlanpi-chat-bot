@@ -29,7 +29,7 @@ def _find_cmd(cmd):
 # define mandatory OS commands (attempt to find in path if not in hardcoded path)
 OS_CORE_CMDS = {
     'DHCLIENT_CMD': _find_cmd('/sbin/dhclient'),
-    'IF_CONFIG_CMD': _find_cmd('/sbin/ifconfig'),
+    'IFCONFIG_CMD': _find_cmd('/sbin/ifconfig'),
     'IF_DOWN_CMD': _find_cmd('/sbin/ifdown'),
     'IF_UP_CMD': _find_cmd('/sbin/ifup'),
     'IP_CMD': _find_cmd('/sbin/ip'),
@@ -48,7 +48,7 @@ OS_OPT_CMDS = {}
 
 # define exportable vars
 DHCLIENT_CMD = OS_CORE_CMDS['DHCLIENT_CMD']
-IF_CONFIG_CMD = OS_CORE_CMDS['IF_CONFIG_CMD']
+IFCONFIG_CMD = OS_CORE_CMDS['IFCONFIG_CMD']
 IF_DOWN_CMD = OS_CORE_CMDS['IF_DOWN_CMD']
 IF_UP_CMD = OS_CORE_CMDS['IF_UP_CMD']
 IP_CMD = OS_CORE_CMDS['IP_CMD']
