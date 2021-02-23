@@ -62,9 +62,6 @@ def lazy_parser(cmd_text, command_list):
 
         matched_command = matched_commands[0]
 
-        # tokenize matched command
-        matched_cmd_tokens = matched_command.split()
-
         # reconstruct command with underscores instead of
         # spaces, ready for command lookup
         cmd = matched_command.replace(" ", "_")
