@@ -15,18 +15,18 @@ Thank you Gareth.
 """
 import json
 import logging
+import os
 import requests
+import sys
 import time
 import urllib
 from pprint import pprint
-
 
 from transports.telegram_comms import TelegramComms
 from wlanpi_commands.command import Command
 from wlanpi_commands.command import register_commands
 from utils.node_data_snapshot import DataSnapshot
 from utils.parser import parse_cmd, lazy_parser
-
 from utils.config import Config
 
 logging.basicConfig(level=logging.INFO)
@@ -40,6 +40,10 @@ conf_obj.read_config()
 
 # Telegram info
 api_key = conf_obj.config['telegram']["bot_token"]
+if not api_key:
+    bot_logger.error("No api token configured in config file (check bot_token). Exiting")
+    sys.exit()
+
 chat_id = False # we may not know our chat_id initially...
 
 if "chat_id" in conf_obj.config['telegram'].keys():
@@ -56,6 +60,15 @@ def main():
     # event loop
     while True:
 
+        # check if we can get to the Telegram API, sleep if not to 
+        # save lots of annoying failed HTTPS requests
+        if conf_obj.config['telegram']["network_check"]:
+
+            if not t.check_api_access():
+                bot_logger.info("Looks like network access issues to Telegram - sleeping")
+                time.sleep(60)
+                continue
+
         # get updates from the Telegram bot
         # (Note we're using long polling, which is an extended http timeout to avoid 
         # use of rapid upstream polling of Telegram bot to check for new messages)
@@ -66,7 +79,7 @@ def main():
         # something went wrong - maybe out Internet connection is down, sleep
         # and try again
         if not updates:
-            bot_logger.info("Looks like possible issue reaching Telegram - sleeping")
+            bot_logger.info("Looks like Telegram API not responding - sleeping")
             time.sleep(60)
             continue
 
@@ -130,7 +143,6 @@ def main():
                 # check for an exact command match & execute it
                 msg = GLOBAL_CMD_DICT[command].run(args_list)
             else:
-                # TODO: Add in smart match to see if can get unique partial match
                 [command, args_list] = lazy_parser(text, fixed_command_list)
 
                 if command:
