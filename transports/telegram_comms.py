@@ -85,7 +85,7 @@ class TelegramComms(object):
         
         return True
     
-    def send_file(self, file_content, chat_id):
+    def send_file(self, file_content, chat_id, caption="File"):
         """
         Method to send file (document) to Telegram Bot 
 
@@ -98,7 +98,7 @@ class TelegramComms(object):
 
         """
         try:
-            requests.post(f"{TELEGRAM_URL}/bot{self.api_key}/sendDocument", data={'chat_id': chat_id}, files={'document': file_content})
+            requests.post(f"{TELEGRAM_URL}/bot{self.api_key}/sendDocument", data={'chat_id': chat_id, 'caption': caption}, files={'document': file_content})
         except HTTPError as http_err:
             self.err_msg = f'HTTP error occurred: {http_err}'
             class_logger.error(self.err_msg)
