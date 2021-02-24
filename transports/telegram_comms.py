@@ -85,6 +85,30 @@ class TelegramComms(object):
         
         return True
     
+    def send_file(self, file_content, chat_id):
+        """
+        Method to send file (document) to Telegram Bot 
+
+        Arguments:
+            file_content {mandatory binary str} -- binary content of file
+        
+        Returns:
+            On failure : False (error message in self.err_msg)
+            Sucess: True
+
+        """
+        try:
+            requests.post(f"{TELEGRAM_URL}/bot{self.api_key}/sendDocument", data={'chat_id': chat_id}, files={'document': file_content})
+        except HTTPError as http_err:
+            self.err_msg = f'HTTP error occurred: {http_err}'
+            class_logger.error(self.err_msg)
+            return False
+        except Exception as err:
+            self.err_msg = f'Other error occurred: {err}'
+            class_logger.error(self.err_msg)
+            return False
+        
+        return True
 
     def get_url(self, url):
         
@@ -153,7 +177,7 @@ class TelegramComms(object):
     
     def check_spool_dir_exists(self):
         """
-        Check if root cache dir exists (by default /var/spool/wlan-pi-chatbot)
+        Check if root cache dir exists (by default /var/spool/wlanpi-chatbot)
         """
         if os.path.exists(SPOOL_DIR) and os.path.isdir(SPOOL_DIR):
             return True
