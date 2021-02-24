@@ -3,6 +3,8 @@
 
 import json
 import logging
+import os
+from pathlib import Path
 import time
 import requests
 from requests.exceptions import HTTPError
@@ -10,7 +12,7 @@ import subprocess
 import sys
 import urllib
 
-from utils.constants import TELEGRAM_URL, TELEGRAM_HOST, TELEGRAM_PORT
+from utils.constants import TELEGRAM_URL, TELEGRAM_HOST, TELEGRAM_PORT, SPOOL_DIR, MAX_SPOOL_SIZE
 from utils.os_cmds import NC_CMD
 
 logging.basicConfig(level=logging.INFO)
@@ -147,5 +149,66 @@ class TelegramComms(object):
             output = exc.output.decode()
             class_logger.error("Port check to Telegram failed. Err msg: {}".format(str(output)))
             return False
+        return True
+    
+    def check_spool_dir_exists(self):
+        """
+        Check if root cache dir exists (by default /var/spool/wlan-pi-chatbot)
+        """
+        if os.path.exists(SPOOL_DIR) and os.path.isdir(SPOOL_DIR):
+            return True
+        return False
+    
+    def create_spool_dir(self):
+        """
+        Create spool dir
+        """
+        try: 
+            os.makedirs(SPOOL_DIR, exist_ok = True) 
+            class_logger.debug("Created spooling root dir: {}".format(SPOOL_DIR))
+        except OSError as e: 
+            class_logger.error("Cannot create spooling root dir: {} ({})".format(SPOOL_DIR, e.strerror)) 
+            return False
+        return True
+    
+    def flush_spool_dir(self):
+        """
+        Remove all files in spool dir
+        """
+        #TODO: this is a bit quick & dirty, add checks
+        for file in os.listdir(SPOOL_DIR):
+            filename = "{}/{}".format(SPOOL_DIR, file)
+            os.remove(filename)
 
         return True
+    
+    def get_spooler_queue(self):
+
+        messages = []
+
+        # check spooler dir exists
+        if not self.check_spool_dir_exists():
+            class_logger("Spool dir does not exist - spooler operation abandoned.")
+            return True
+
+        # read files in spooler dir
+        sorted_path_list = sorted(Path(SPOOL_DIR).iterdir(), key=os.path.getmtime)
+        print(sorted_path_list)
+        for file in sorted_path_list:
+            try:
+                with file.open() as spool_file:
+                    file_content = "".join(spool_file.readlines())
+            except IOError as err:
+                class_logger.error("JSON I/O file read error: {}".format(err))
+                break
+
+            messages.append(file_content)
+
+        # slice to safe number of entries
+        messages = messages[:MAX_SPOOL_SIZE]
+
+        # empty spooler dir
+        self.flush_spool_dir()
+
+        # return messages list
+        return messages
