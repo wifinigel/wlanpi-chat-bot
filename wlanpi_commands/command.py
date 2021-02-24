@@ -113,6 +113,7 @@ class Command():
 from .set_display_mode import SetDisplayMode
 from .set_display_width import SetDisplayWidth
 from .show_time import ShowTime
+from .show_uptime import ShowUptime
 from .show_cdp import ShowCDP
 from .show_publicip import ShowPublicip
 from .show_reachability import ShowReachability
@@ -123,6 +124,7 @@ from .exec_reboot import ExecReboot
 from .exec_iperf import ExecIperf
 from .exec_iperf3 import ExecIperf3
 from .exec_ping import ExecPing
+from .exec_getfile import ExecGetfile
 from .exec_speedtest import ExecSpeedtest
 from .show_status import ShowStatus
 from .show_version import ShowVersion
