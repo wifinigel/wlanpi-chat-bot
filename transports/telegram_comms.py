@@ -193,7 +193,6 @@ class TelegramComms(object):
 
         # read files in spooler dir
         sorted_path_list = sorted(Path(SPOOL_DIR).iterdir(), key=os.path.getmtime)
-        print(sorted_path_list)
         for file in sorted_path_list:
             try:
                 with file.open() as spool_file:
