@@ -51,6 +51,13 @@ if "chat_id" in conf_obj.config['telegram'].keys():
 
 t = TelegramComms(api_key)
 
+# create a alert spooling dir if required
+if not t.check_spool_dir_exists():
+    t.create_spool_dir()
+
+# flush old spool files
+t.flush_spool_dir()
+
 # register all commands ready to use later
 GLOBAL_CMD_DICT = register_commands(t, conf_obj)
 
@@ -68,6 +75,11 @@ def main():
                 bot_logger.info("Looks like network access issues to Telegram - sleeping")
                 time.sleep(60)
                 continue
+
+        # Process any alerts waiting in the spooler queue
+        if t.chat_id:
+            for alert in t.get_spooler_queue():
+                t.send_msg(alert, t.chat_id)
 
         # get updates from the Telegram bot
         # (Note we're using long polling, which is an extended http timeout to avoid 
