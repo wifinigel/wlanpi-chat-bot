@@ -126,6 +126,7 @@ from .exec_iperf3 import ExecIperf3
 from .exec_ping import ExecPing
 from .exec_getfile import ExecGetfile
 from .exec_speedtest import ExecSpeedtest
+from .exec_wireless_capture import ExecWirelessCapture
 from .show_status import ShowStatus
 from .show_version import ShowVersion
 from .show_wlan import ShowWlan
