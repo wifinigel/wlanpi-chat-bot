@@ -28,7 +28,7 @@ class ExecWirelessCapture(Command):
         except IOError:
             return("Capture file access issue - please check path and name.")
 
-        if self.telegram_object.send_file(doc, self.telegram_object.chat_id):
+        if self.telegram_object.send_file(doc, self.telegram_object.chat_id, "PCAP File"):
             return("Capture file sent OK")
         else:
             return("Capture file transfer failed")
