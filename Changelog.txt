@@ -10,3 +10,5 @@ v0.03
 
 1. Added connection check to Telegram API
 2. Centralised constants & os commands
+3. Added spooler support. Any files placed in /var/spool/wlanpi-chatbot will
+   be sent to bot on next poll cycle (or after next msg)
