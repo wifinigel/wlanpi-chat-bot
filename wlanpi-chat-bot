@@ -28,6 +28,7 @@ from wlanpi_commands.command import register_commands
 from utils.node_data_snapshot import DataSnapshot
 from utils.parser import parse_cmd, lazy_parser
 from utils.config import Config
+from utils.constants import SUPPORTED_VERBS
 
 logging.basicConfig(level=logging.INFO)
 bot_logger = logging.getLogger('wlanpi-bot')
@@ -51,12 +52,17 @@ if "chat_id" in conf_obj.config['telegram'].keys():
 
 t = TelegramComms(api_key)
 
-# create a alert spooling dir if required
-if not t.check_spool_dir_exists():
-    t.create_spool_dir()
+# create a messages spooling dir if required
+if not t.check_spool_dir_messages_exists():
+    t.create_spool_messages_dir()
+
+# create a files spooling dir if required
+if not t.check_spool_dir_files_exists():
+    t.create_spool_files_dir()
 
 # flush old spool files
-t.flush_spool_dir()
+t.flush_spool_dir_files()
+t.flush_spool_dir_msgs()
 
 # register all commands ready to use later
 GLOBAL_CMD_DICT = register_commands(t, conf_obj)
@@ -76,10 +82,16 @@ def main():
                 time.sleep(60)
                 continue
 
-        # Process any alerts waiting in the spooler queue
+        # Process spooler queues
         if t.chat_id:
-            for alert in t.get_spooler_queue():
+            # Process any alerts waiting in messages spooler queue
+            for alert in t.get_spooler_messages_queue():
                 t.send_msg(alert, t.chat_id)
+        
+            # Process any files waiting in files spooler queue
+            for filename in t.get_spooler_files_queue():
+                t.send_file(filename, t.chat_id)
+            t.flush_spool_dir_files()
 
         # get updates from the Telegram bot
         # (Note we're using long polling, which is an extended http timeout to avoid 
@@ -143,7 +155,13 @@ def main():
             # parse the message we recevied
             if text == 'help' or text == "?":
                 # process a short help request (return everything)
-                msg = ['Available commands:\n']
+                msg = ['Available command groups:\n']
+                try_msg = ["\nTry 'help show' to see show commands"]
+                msg = msg + SUPPORTED_VERBS + try_msg
+            elif text == 'help all':
+                # show all commands
+                msg = ['All available commands:\n']
+                try_msg = ["\nTry 'help show' to see show commands"]
                 msg = msg + fixed_command_list
             elif text.startswith('help '):
                 # process a help request with match filter (e.g. 'help sh')
