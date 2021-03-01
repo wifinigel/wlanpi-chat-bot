@@ -21,13 +21,7 @@ class ExecGetfile(Command):
         else:
              return"Please supply filename. Failed"
 
-        try:
-            with open(filename, 'rb') as document:
-                doc = document.read()
-        except IOError:
-            return("File access issue - please check path and name.")
-
-        if self.telegram_object.send_file(doc, self.telegram_object.chat_id):
+        if self.telegram_object.send_file(filename, self.telegram_object.chat_id):
             return("File sent OK")
         else:
             return("File transfer failed")
