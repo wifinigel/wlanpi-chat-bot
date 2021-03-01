@@ -1,4 +1,6 @@
-from .command import Command
+from wlanpi_commands.command import Command
+from utils.constants import SPOOL_DIR_FILES
+
 import os
 
 class ExecWirelessCapture(Command):
@@ -7,28 +9,64 @@ class ExecWirelessCapture(Command):
         super().__init__(telegram_object, conf_obj)
 
         self.command_name = "exec_wireless_capture"
+
+        # defaults
+        self.channel = 36
+        self.channel_width = 'HT20'
+        self.interface = 'wlan0'
+        self.duration = 20
+
+        self.valid_channels = [1,2,3,4,5,6,7,8,9,10,11,12,13,36,40,44,48,
+            52,56,60,64,100,104,108,112,116,120,124,128,132,136,140,144,
+            149,153,157,161,165]
+        self.valid_widths = ['20', '40+', '40-', '80']
+        self.width = { '20': "HT20", '40+': "HT40+", '40-': "HT40-", '80': "80MHz" }
+        
+        
+        self.max_duration = 60
     
+
     def run(self, args_list):   
         progress_msg = "starting wireless capture..."
         #self.telegram_object.send_msg(progress_msg, self.telegram_object.chat_id)
 
         # trigger capture
         cmd_string = "/opt/wlanpi-chat-bot/scripts/wireless_capture.sh"
+
+        # check args
+        if len(args_list) > 0:
+            if int(args_list[0]) not in self.valid_channels:
+                return("Invalid channel number supplied.")
+            else:
+                self.channel = args_list[0]
         
-        if self.run_ext_cmd(progress_msg,cmd_string):
+        if len(args_list) > 1:
+            if args_list[1] not in self.valid_widths:
+                return("Invalid channel width supplied.")
+            else:
+                self.channel_width = self.width[ args_list[1] ]
+        
+        if len(args_list) > 2:
+            self.interface = args_list[2]
+        
+        if len(args_list) > 3:
+            self.duration = args_list[3]
+
+            # enforce hard limit
+            if int(self.duration) > self.max_duration:
+                self.duration = self.max_duration
+        
+        cmd_string = cmd_string + " {} {} {} {}".format(self.channel, self.channel_width, self.interface, self.duration)
+
+        if self.run_ext_cmd(progress_msg, cmd_string):
             self.telegram_object.send_msg("Capture completed.", self.telegram_object.chat_id)
         else:
             return("Capture failed.")
 
         filename = '/tmp/wlandump.pcap'
 
-        try:
-            with open(filename, 'rb') as document:
-                doc = document.read()
-        except IOError:
-            return("Capture file access issue - please check path and name.")
+        # copy capture file to files spooler dir
+        os.system("cp {} {}".format(filename, SPOOL_DIR_FILES))
 
-        if self.telegram_object.send_file(doc, self.telegram_object.chat_id, "PCAP File"):
-            return("Capture file sent OK")
-        else:
-            return("Capture file transfer failed")
+        return("Capture file sent to file spooler...please wait.")
+        
