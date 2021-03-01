@@ -2,10 +2,12 @@
 # Capture of wireless frames using tcpdump
 ###########################################
 LOG_FILE="/var/log/wireless_cap.log"
-WLAN_IF=wlan0
-CHANNEL=1
+
+CHANNEL=$1
 # values: HT20, HT40-, HT40+, 80MHz
-WIDTH=HT20
+WIDTH=$2
+WLAN_IF=$3
+DURATION=$4
 DUMP_FILE=/tmp/wlandump.pcap
 
 echo "Starting wireless capture" >  $LOG_FILE 
@@ -62,7 +64,7 @@ sleep 5
 
 # run the tcpdump
 echo "Running tshark against interface $WLAN_IF..." >>  $LOG_FILE
-sudo tshark -i $WLAN_IF -w $DUMP_FILE -a duration:10 >> $LOG_FILE 2>&1
+sudo tshark -i $WLAN_IF -w $DUMP_FILE -a duration:$DURATION >> $LOG_FILE 2>&1
 if [ "$?" != '0' ]; then
     echo "Issue running tshark" | tee -a $LOG_FILE 
     exit 1
