@@ -12,7 +12,15 @@ import subprocess
 import sys
 import urllib
 
-from utils.constants import TELEGRAM_URL, TELEGRAM_HOST, TELEGRAM_PORT, SPOOL_DIR, MAX_SPOOL_SIZE
+from utils.constants import (
+    TELEGRAM_URL,
+    TELEGRAM_HOST,
+    TELEGRAM_PORT,
+    SPOOL_DIR,
+    MAX_SPOOL_SIZE,
+    SPOOL_DIR_FILES,
+    SPOOL_DIR_MSGS
+)
 from utils.os_cmds import NC_CMD
 
 logging.basicConfig(level=logging.INFO)
@@ -85,7 +93,7 @@ class TelegramComms(object):
         
         return True
     
-    def send_file(self, file_content, chat_id, caption="File"):
+    def send_file(self, filename, chat_id, caption="File"):
         """
         Method to send file (document) to Telegram Bot 
 
@@ -98,7 +106,7 @@ class TelegramComms(object):
 
         """
         try:
-            requests.post(f"{TELEGRAM_URL}/bot{self.api_key}/sendDocument", data={'chat_id': chat_id, 'caption': caption}, files={'document': open('/tmp/wlandump.pcap', 'rb') })    
+            requests.post(f"{TELEGRAM_URL}/bot{self.api_key}/sendDocument", data={'chat_id': chat_id}, files={'document': open(filename, 'rb') })    
         except HTTPError as http_err:
             self.err_msg = f'HTTP error occurred: {http_err}'
             class_logger.error(self.err_msg)
@@ -175,48 +183,77 @@ class TelegramComms(object):
             return False
         return True
     
-    def check_spool_dir_exists(self):
+    def check_spool_dir_messages_exists(self):
         """
-        Check if root cache dir exists (by default /var/spool/wlanpi-chatbot)
+        Check if cache dir exists (by default /var/spool/wlanpi-chatbot/messages)
         """
-        if os.path.exists(SPOOL_DIR) and os.path.isdir(SPOOL_DIR):
+        if os.path.exists(SPOOL_DIR_MSGS) and os.path.isdir(SPOOL_DIR_MSGS):
             return True
         return False
     
-    def create_spool_dir(self):
+    def check_spool_dir_files_exists(self):
+        """
+        Check if cache dir exists (by default /var/spool/wlanpi-chatbot/filess)
+        """
+        if os.path.exists(SPOOL_DIR_FILES) and os.path.isdir(SPOOL_DIR_FILES):
+            return True
+        return False
+    
+    def create_spool_messages_dir(self):
         """
         Create spool dir
         """
         try: 
-            os.makedirs(SPOOL_DIR, exist_ok = True) 
-            class_logger.debug("Created spooling root dir: {}".format(SPOOL_DIR))
+            os.makedirs(SPOOL_DIR_MSGS, exist_ok = True) 
+            class_logger.debug("Created spooling dir: {}".format(SPOOL_DIR_MSGS))
         except OSError as e: 
-            class_logger.error("Cannot create spooling root dir: {} ({})".format(SPOOL_DIR, e.strerror)) 
+            class_logger.error("Cannot create spooling root dir: {} ({})".format(SPOOL_DIR_MSGS, e.strerror)) 
             return False
         return True
     
-    def flush_spool_dir(self):
+    def create_spool_files_dir(self):
         """
-        Remove all files in spool dir
+        Create spool dir
         """
-        #TODO: this is a bit quick & dirty, add checks
-        for file in os.listdir(SPOOL_DIR):
-            filename = "{}/{}".format(SPOOL_DIR, file)
-            os.remove(filename)
-
+        try: 
+            os.makedirs(SPOOL_DIR_FILES, exist_ok = True) 
+            class_logger.debug("Created spooling dir: {}".format(SPOOL_DIR_FILES))
+        except OSError as e: 
+            class_logger.error("Cannot create spooling root dir: {} ({})".format(SPOOL_DIR_FILES, e.strerror)) 
+            return False
         return True
     
-    def get_spooler_queue(self):
+    def flush_spool_dir_msgs(self):
+        """
+        Remove all files in messages spool dir
+        """
+        #TODO: this is a bit quick & dirty, add checks
+        for file in os.listdir(SPOOL_DIR_MSGS):
+            filename = "{}/{}".format(SPOOL_DIR_MSGS, file)
+            os.remove(filename)
+        return True
+    
+    def flush_spool_dir_files(self):
+        """
+        Remove all files in files spool dir
+        """
+        #TODO: this is a bit quick & dirty, add checks
+        for file in os.listdir(SPOOL_DIR_FILES):
+            filename = "{}/{}".format(SPOOL_DIR_FILES, file)
+            os.remove(filename)
+        return True
+    
+    def get_spooler_messages_queue(self):
 
         messages = []
 
-        # check spooler dir exists
-        if not self.check_spool_dir_exists():
+        # check spooler message dir exists
+        if not self.check_spool_dir_messages_exists():
             class_logger("Spool dir does not exist - spooler operation abandoned.")
             return True
 
         # read files in spooler dir
-        sorted_path_list = sorted(Path(SPOOL_DIR).iterdir(), key=os.path.getmtime)
+        sorted_path_list = sorted(Path(SPOOL_DIR_MSGS).iterdir(), key=os.path.getmtime)
         for file in sorted_path_list:
             try:
                 with file.open() as spool_file:
@@ -231,7 +268,28 @@ class TelegramComms(object):
         messages = messages[:MAX_SPOOL_SIZE]
 
         # empty spooler dir
-        self.flush_spool_dir()
+        self.flush_spool_dir_msgs()
 
         # return messages list
         return messages
+
+    def get_spooler_files_queue(self):
+
+        filesnames = []
+
+        # check spooler message dir exists
+        if not self.check_spool_dir_files_exists():
+            class_logger("Spool dir does not exist - spooler operation abandoned.")
+            return True
+
+        # read files in spooler dir
+        sorted_path_list = sorted(Path(SPOOL_DIR_FILES).iterdir(), key=os.path.getmtime)
+        
+        for filename in sorted_path_list:
+            filesnames.append(filename)
+
+        # slice to safe number of entries
+        filesnames = filesnames[:MAX_SPOOL_SIZE]
+
+        # return messages list
+        return filesnames
