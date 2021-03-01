@@ -82,7 +82,7 @@ class Command():
             output = exc.output.decode()
             error = "Err: cmd error : {}".format(output)
             #self.telegram_object.send_msg(error, chat_id)
-            return error
+            return False
 
         if len(cmd_info) == 0:
             cmd_info.append("No output sorry")
