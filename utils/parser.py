@@ -1,6 +1,6 @@
+from .constants import SUPPORTED_VERBS
 
-
-supported_verbs = [ 'show', 'exec', 'set', 'run']
+SUPPORTED_VERBS = [ 'show', 'exec', 'set', 'run']
 
 def verb_expander(cmd_verb):
 
@@ -38,7 +38,7 @@ def lazy_parser(cmd_text, command_list):
     args = tokens[1:]
 
     # check verb for possible abbreviation expansion
-    if verb not in supported_verbs:
+    if verb not in SUPPORTED_VERBS:
         verb = verb_expander(verb)
     
     if not verb:
@@ -111,7 +111,7 @@ def parse_cmd(cmd_text, command_list):
     args = []
 
     # check verb for possible abbreviation expansion
-    if verb not in supported_verbs:
+    if verb not in SUPPORTED_VERBS:
         verb = verb_expander(verb)
     
     if not verb:
