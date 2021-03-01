@@ -7,7 +7,7 @@ Manipulate the global config file
 
 import json
 import logging
-from utils.constants import CONFIG_FILE
+from .constants import CONFIG_FILE
 
 logging.basicConfig(level=logging.INFO)
 class_logger = logging.getLogger('Config')
