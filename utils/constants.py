@@ -13,4 +13,4 @@ SPOOL_DIR_MSGS = SPOOL_DIR + "/messages"
 SPOOL_DIR_FILES = SPOOL_DIR + "/files"
 MAX_SPOOL_SIZE = 5
 
-SUPPORTED_VERBS = [ 'show', 'exec', 'set', 'run']
+SUPPORTED_VERBS = [ 'show', 'exec', 'set']
