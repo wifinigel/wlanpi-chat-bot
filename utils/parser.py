@@ -41,7 +41,7 @@ def lazy_parser(cmd_text, command_list):
     if verb not in SUPPORTED_VERBS:
         verb = verb_expander(verb)
     
-    if not verb:
+    if not verb or (len(args) == 0):
         # no match, time to bail
         return [ False, [] ]
     
