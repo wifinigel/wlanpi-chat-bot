@@ -1,6 +1,5 @@
 _scratchpad
 .vscode
-etc/config.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
