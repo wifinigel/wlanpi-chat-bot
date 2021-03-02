@@ -9,6 +9,17 @@ class ShowStatus(Command):
 
         self.command_name = "show_status"
     
+    def help_message(self):
+        """
+        Return the help page for this command
+        """
+        short_msg = "Shows unit status\ninc uptime\n&interface addrs"
+        long_msg = """Show unit status, including hostname, uptime, current status and interface IP addresses        
+
+Args: None"""
+
+        return self._render_help(short_msg, long_msg)
+    
     def run(self, args_list):
 
         # remove snapshot file & re-init snapshot

@@ -95,6 +95,15 @@ class Command():
         result  = "This is useful data"
 
         return result
+    
+    def _render_help(self, short_msg, long_msg):
+
+        cmd_str = "Command: " + self.command_name.replace("_", " ") + "\n\n"
+
+        if self.display_mode == "compact":
+            return cmd_str + short_msg
+        else:
+            return cmd_str + long_msg
 
 
     def help_message(self):
@@ -102,12 +111,9 @@ class Command():
         Return the help page for this command
         """
         short_msg = "No help defined"
-        long_msg = "The developer has not yet defined a help page for this command.\nIt was probably Nigel."
+        long_msg = "The developer has not yet defined a help page for this command.\n\nIt was probably Nigel (or maybe Jiri)."
 
-        if self.display_mode == "compact":
-            return short_msg
-        else:
-            return long_msg
+        return self._render_help(short_msg, long_msg)
 
 # import our commands
 from .set_display_mode import SetDisplayMode

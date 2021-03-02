@@ -152,11 +152,25 @@ def main():
 
             msg = "blank"
 
-            # parse the message we recevied
+            #########################################
+            # Command parsing start
+            #########################################
+
+            # Parse the message we received:
+            #
+            # 1. Check for exact match on 'help' or '?'
+            # 2. Check for 'help all' to list all commands
+            # 3. Check for 'help' + (partial)'command string' - return help screen for command 
+            #    if unique match
+            # 4. Check for 'help part_command_string' - return list of matching commands
+            # 5. Check for exact command and execute it (e.g. show status)
+            # 6. Check for partial match of command and run if unique partial 
+            #    match (e.g. sh st)
+            #  
             if text == 'help' or text == "?":
                 # process a short help request (return everything)
                 msg = ['Available command groups:\n']
-                try_msg = ["\nTry 'help show' to see show commands"]
+                try_msg = ["\nTry 'help show' to see show commands\nEnter 'help all' to see all commands"]
                 msg = msg + SUPPORTED_VERBS + try_msg
             elif text == 'help all':
                 # show all commands
@@ -164,11 +178,18 @@ def main():
                 try_msg = ["\nTry 'help show' to see show commands"]
                 msg = msg + fixed_command_list
             elif text.startswith('help '):
-                # process a help request with match filter (e.g. 'help sh')
-                msg = ['Filtered commands:\n']
-                cmd = text[5:]
-                match_list = list(filter(lambda x: (x.startswith(cmd)) , fixed_command_list))
-                msg = msg + match_list
+                # check if command matches on a lazy parse - retrun help page of comand
+                # if it does
+                command_str = text[5:] # slice off 'help '
+                [command, args_list] = lazy_parser(command_str, fixed_command_list)
+                if command:
+                    msg = GLOBAL_CMD_DICT[command].help_message()
+                else:
+                    # process a help request with match filter (e.g. 'help sh')
+                    msg = ['Filtered commands:\n']
+                    cmd = text[5:]
+                    match_list = list(filter(lambda x: (x.startswith(cmd)) , fixed_command_list))
+                    msg = msg + match_list
             elif command in command_list:
                 # check for an exact command match & execute it
                 msg = GLOBAL_CMD_DICT[command].run(args_list)
@@ -179,6 +200,10 @@ def main():
                     msg = GLOBAL_CMD_DICT[command].run(args_list)
                 else:
                     msg = 'Unknown command (try "help" command)'
+
+            #########################################
+            # Command parsing end
+            #########################################
 
             bot_logger.debug("Send status data to Telegram: {}".format(msg))
             t.send_msg(msg, chat)
