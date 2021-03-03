@@ -1,6 +1,7 @@
 import os
 import subprocess
 import textwrap
+import logging
 
 class Command():
     """
@@ -14,6 +15,9 @@ class Command():
         self.display_mode = self.conf_obj.config['telegram']['display_mode']
         self.display_width = self.conf_obj.config['telegram']['display_width']
         self.telegram_object = telegram_object
+        
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger('wlanpi-bot-command')
     
     def _refresh_config(self):
         self.conf_obj.read_config()
@@ -81,7 +85,7 @@ class Command():
         except subprocess.CalledProcessError as exc:
             output = exc.output.decode()
             error = "Err: cmd error : {}".format(output)
-            #self.telegram_object.send_msg(error, chat_id)
+            self.logger.error(error, chat_id)
             return False
 
         if len(cmd_info) == 0:
