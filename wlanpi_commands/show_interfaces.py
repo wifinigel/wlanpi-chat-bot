@@ -8,7 +8,27 @@ class ShowInterfaces(Command):
 
         self.command_name = "show_interfaces"
     
+    def help_message(self):
+        """
+        Return the help page for this command
+        """
+        long_msg = """Displays a summary of probe interfaces.       
+
+Args: None
+
+ Example: show interfaces
+"""
+        short_msg = long_msg
+        return self._render_help(short_msg, long_msg)
+    
     def run(self, args_list):
+        
+        # check if help rquired
+        if len(args_list) > 0:
+            if args_list[0] == "?":
+                    return self._render(self.help_message())
+            else:
+                return self._render("Unknown argument.")
         
         """
         Info: 
@@ -34,6 +54,26 @@ class ShowInterfaces(Command):
         psutil.net_if_addrs()
         """
 
+        interface_stats = psutil.net_if_stats()
+        interface_addresses= psutil.net_if_addrs()
+        interface_list = []
+
+        for if_name in  interface_stats.keys():
+
+          ip_addr = " [No IP addr] "
+          if interface_addresses[if_name][0].family == 2:
+            ip_addr = interface_addresses[if_name][0].address
+          
+          if_status = interface_stats[if_name].isup
+          
+          if_up_down = "Down"
+          if if_status == True:
+            if_up_down = "Up"
+          
+          if_summary = "{} {} ({})".format(if_name, ip_addr, if_up_down)
+          interface_list.append(if_summary)
+
+        net_info = "Interface list: \n\n" + "\n".join(interface_list)
         
         return self._render(net_info)
 
