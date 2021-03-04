@@ -11,6 +11,22 @@ class ExecPing(Command):
 
         self.command_name = "exec_ping"
     
+    def help_message(self):
+        """
+        Return the help page for this command
+        """
+        long_msg = """Performs a ping test and reports result.       
+
+Args:
+ [1] Target ip [mandatory] (e.g. 192.168.0.99)
+
+  (* = default value)
+
+ Example: exec ping 192.168.0.99 udp
+"""
+        short_msg = long_msg
+        return self._render_help(short_msg, long_msg)
+    
     def run(self, args_list):
 
         target_ip = ''

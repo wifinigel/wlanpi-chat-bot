@@ -6,6 +6,7 @@ import os
 class ExecWirelessCapture(Command):
     
     def __init__(self, telegram_object, conf_obj):
+        # extend Command base class
         super().__init__(telegram_object, conf_obj)
 
         self.command_name = "exec_wireless_capture"
@@ -54,6 +55,10 @@ Args:
 
         # check args
         if len(args_list) > 0:
+            
+            if args_list[0] == "?":
+                return self._render(self.help_message())
+            
             if int(args_list[0]) not in self.valid_channels:
                 return("Invalid channel number supplied.")
             else:
