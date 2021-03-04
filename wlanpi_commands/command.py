@@ -122,6 +122,7 @@ class Command():
 # import our commands
 from .set_display_mode import SetDisplayMode
 from .set_display_width import SetDisplayWidth
+from .show_interfaces import ShowInterfaces
 from .show_time import ShowTime
 from .show_uptime import ShowUptime
 from .show_cdp import ShowCDP
