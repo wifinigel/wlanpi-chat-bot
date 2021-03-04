@@ -9,11 +9,29 @@ class ExecSpeedtest(Command):
 
         self.command_name = "exec_speedtest"
     
+    def help_message(self):
+        """
+        Return the help page for this command
+        """
+        long_msg = """Performs a Ookla speedtest and returns result.       
+
+Args: None
+
+ Example: exec speedtest
+"""
+    
     def run(self, args_list):
 
         # send status msg  
         chat_id = self.telegram_object.chat_id
         self.telegram_object.send_msg("Running speedtest...please wait", chat_id)
+
+        # check if help rquired
+        if len(args_list) > 0:
+            if args_list[0] == "?":
+                    return self._render(self.help_message())
+            else:
+                return self._render("Unknown argument.")
 
         # perform speedtest
         speedtest_info = []

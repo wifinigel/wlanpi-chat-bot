@@ -8,11 +8,28 @@ class SetDisplayWidth(Command):
 
         self.command_name = "set_display_width"
     
+    def help_message(self):
+        """
+        Return the help page for this command
+        """
+        long_msg = """Sets the bot output display width if using compact mode.       
+
+Args:
+ [1] Display width (# characters) [mandatory] (e.g. 30)
+
+ Example: set display widt 30
+"""
+        short_msg = long_msg
+        return self._render_help(short_msg, long_msg)
+    
     def run(self, args_list):
 
         # check we have an arg to specify "compact" or "full"
         if not len(args_list) > 0:
             return self._render("Missing argument - specify number chars required")
+        
+        if args_list[0] == "?":
+                return self._render(self.help_message())
         
         display_width = int(args_list[0])
 

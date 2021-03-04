@@ -8,11 +8,28 @@ class SetDisplayMode(Command):
 
         self.command_name = "set_display_mode"
     
+    def help_message(self):
+        """
+        Return the help page for this command
+        """
+        long_msg = """Sets the bot output display mode to cater for specific-width displays.       
+
+Args:
+ [1] Mode [mandatory] (e.g. full / compact)
+
+ Example: set display mode compact
+"""
+        short_msg = long_msg
+        return self._render_help(short_msg, long_msg)
+    
     def run(self, args_list):
 
         # check we have an arg to specify "compact" or "full"
         if not len(args_list) > 0:
             return self._render("Missing argument - specify 'full' or 'compact'")
+        
+        if args_list[0] == "?":
+                return self._render(self.help_message())
         
         display_mode = args_list[0]
 

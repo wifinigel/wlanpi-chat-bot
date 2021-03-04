@@ -23,6 +23,7 @@ Args: None
     
     def run(self, args_list):
 
+        # check if help rquired
         if len(args_list) > 0:
             if args_list[0] == "?":
                     return self._render(self.help_message())
