@@ -7,7 +7,27 @@ class ShowCDP(Command):
 
         self.command_name = "show_cdp"
     
+    def help_message(self):
+        """
+        Return the help page for this command
+        """
+        long_msg = """Displays CDP info detected by the probe.       
+
+Args: None
+
+ Example: show cdp
+"""
+        short_msg = long_msg
+        return self._render_help(short_msg, long_msg)
+    
     def run(self, args_list):
+
+        # check if help rquired
+        if len(args_list) > 0:
+            if args_list[0] == "?":
+                    return self._render(self.help_message())
+            else:
+                return self._render("Unknown argument.")
         
         # read in CDP data is available
         cdp_data = self._read_file('/tmp/cdpneigh.txt')
