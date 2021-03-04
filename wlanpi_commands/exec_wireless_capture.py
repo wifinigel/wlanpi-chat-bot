@@ -88,8 +88,11 @@ Args:
 
         filename = '/tmp/wlandump.pcap'
 
-        # copy capture file to files spooler dir
-        os.system("cp {} {}".format(filename, SPOOL_DIR_FILES))
-
-        return("Capture file sent to file spooler...please wait.")
+        # if file size < 50Mb, send to spooler
+        if os.stat(filename).st_size < 50e6:
+            # copy capture file to files spooler dir
+            os.system("cp {} {}".format(filename, SPOOL_DIR_FILES))
+            return("Capture file sent to file spooler...please wait.")
+        else:
+            return("Capture file is too large to send over Telegram (> 50Mb)")
         
