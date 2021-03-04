@@ -77,7 +77,8 @@ Args:
             if int(self.duration) > self.max_duration:
                 self.duration = self.max_duration
         
-        progress_msg = "starting wireless capture...(duration = {} secs)".format(self.duration)
+        progress_msg = "Starting wireless capture...(ch = {}, width = {}, i/f = {}, duration = {} secs)".format(
+            self.channel, self.channel_width, self.interface, self.duration)
         
         cmd_string = cmd_string + " {} {} {} {}".format(self.channel, self.channel_width, self.interface, self.duration)
 
