@@ -14,3 +14,4 @@ SPOOL_DIR_FILES = SPOOL_DIR + "/files"
 MAX_SPOOL_SIZE = 5
 
 SUPPORTED_VERBS = [ 'show', 'exec', 'set']
+HIDDEN_COMMANDS = [ 'exec_cmd' ]

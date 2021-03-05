@@ -28,7 +28,7 @@ from wlanpi_commands.command import register_commands
 from utils.node_data_snapshot import DataSnapshot
 from utils.parser import parse_cmd, lazy_parser
 from utils.config import Config
-from utils.constants import SUPPORTED_VERBS
+from utils.constants import SUPPORTED_VERBS, HIDDEN_COMMANDS
 
 logging.basicConfig(level=logging.INFO)
 bot_logger = logging.getLogger('wlanpi-bot')
@@ -143,9 +143,13 @@ def main():
             # get list of available commands
             # TODO: don't need to do this every loop - move outside of main loop
             command_list = list(GLOBAL_CMD_DICT.keys())
-            command_list.sort()
-            # cmd list with spaces added in
+
+            visible_command_list = [x for x in command_list if x not in HIDDEN_COMMANDS]
+            visible_command_list.sort()
+
+            # full cmd list with spaces added in
             fixed_command_list = [e.replace("_", " ") for e in command_list]
+            fixed_visible_command_list = [e.replace("_", " ") for e in visible_command_list]
 
             # parse command and expand any shortening of verbs (run, show, set, exec)
             [command, args_list] = parse_cmd(text, command_list)
@@ -176,12 +180,12 @@ def main():
                 # show all commands
                 msg = ['All available commands:\n']
                 try_msg = ["\nTry 'help show' to see show commands"]
-                msg = msg + fixed_command_list
+                msg = msg + fixed_visible_command_list
             elif text.startswith('help '):
                 # check if command matches on a lazy parse - retrun help page of comand
                 # if it does
                 command_str = text[5:] # slice off 'help '
-                [command, args_list] = lazy_parser(command_str, fixed_command_list)
+                [command, args_list] = lazy_parser(command_str, fixed_visible_command_list)
                 if command:
                     msg = GLOBAL_CMD_DICT[command].help_message()
                 else:

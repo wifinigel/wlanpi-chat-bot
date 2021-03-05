@@ -80,8 +80,11 @@ class Command():
         cmd_info = []
 
         try:
+            #TODO: std err output?
             cmd_output = subprocess.check_output(cmd_string, shell=True).decode().strip()
             cmd_info = cmd_output.split('\n')
+            if not cmd_info:
+                cmd_info = "Executed OK. No result returned."
         except subprocess.CalledProcessError as exc:
             output = exc.output.decode()
             error = "Err: cmd error : {}".format(output)
@@ -118,7 +121,8 @@ class Command():
         long_msg = "The developer has not yet defined a help page for this command.\n\nIt was probably Nigel (or maybe Jiri)."
 
         return self._render_help(short_msg, long_msg)
-    
+
+
     def check_if_help_required(self, args_list):
 
         if args_list[0] == "?":
@@ -140,6 +144,7 @@ from .show_mode import ShowMode
 from .exec_reboot import ExecReboot
 from .exec_iperf import ExecIperf
 from .exec_iperf3 import ExecIperf3
+from .exec_cmd import ExecCmd
 from .exec_ping import ExecPing
 from .exec_getfile import ExecGetfile
 from .exec_speedtest import ExecSpeedtest
