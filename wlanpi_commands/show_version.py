@@ -10,6 +10,10 @@ class ShowVersion(Command):
     
     def run(self, args_list):
         
+        # check if help rquired if we have unexpected args
+        if len(args_list) > 0:
+            return self.check_if_help_required(args_list)
+        
         WLANPI_IMAGE_FILE = '/etc/wlanpi-release'
 
         version_string = "No version info found"

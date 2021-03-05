@@ -118,6 +118,12 @@ class Command():
         long_msg = "The developer has not yet defined a help page for this command.\n\nIt was probably Nigel (or maybe Jiri)."
 
         return self._render_help(short_msg, long_msg)
+    
+    def check_if_help_required(self, args_list):
+
+        if args_list[0] == "?":
+            return self._render(self.help_message())
+        return self._render("Unknown argument.")
 
 # import our commands
 from .set_display_mode import SetDisplayMode

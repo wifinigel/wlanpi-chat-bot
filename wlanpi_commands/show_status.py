@@ -22,6 +22,10 @@ Args: None"""
     
     def run(self, args_list):
 
+        # check if help rquired if we have unexpected args
+        if len(args_list) > 0:
+            return self.check_if_help_required(args_list)
+
         # remove snapshot file & re-init snapshot
         snapshot = DataSnapshot()
         os.remove(snapshot.local_file)

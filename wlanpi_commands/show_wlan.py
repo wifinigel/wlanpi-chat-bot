@@ -44,6 +44,10 @@ class ShowWlan(Command):
         Create page to summarise WLAN interface info
         '''
 
+        # check if help rquired if we have unexpected args
+        if len(args_list) > 0:
+            return self.check_if_help_required(args_list)
+
         ifconfig_file = IFCONFIG_CMD
         iwconfig_file = IWCONFIG_CMD
 

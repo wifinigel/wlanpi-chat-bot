@@ -22,12 +22,9 @@ Args: None
     
     def run(self, args_list):
 
-        # check if help rquired
+        # check if help rquired if we have unexpected args
         if len(args_list) > 0:
-            if args_list[0] == "?":
-                    return self._render(self.help_message())
-            else:
-                return self._render("Unknown argument.")
+            return self.check_if_help_required(args_list)
         
         # read in CDP data is available
         cdp_data = self._read_file('/tmp/lldpneigh.txt')

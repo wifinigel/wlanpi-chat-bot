@@ -13,6 +13,10 @@ class ShowSummary(Command):
         
         # Taken from FPMS...
 
+        # check if help rquired if we have unexpected args
+        if len(args_list) > 0:
+            return self.check_if_help_required(args_list)
+        
         # figure out our IP
         IP = ''
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
